@@ -30,10 +30,13 @@ def analyze_with_ai(resume_text: str, job_description: str):
     Job Description:
     {job_description}
 
-    Return:
-    - Match score (0-100)
-    - Missing skills
-    - Suggestions
+    IMPORTANT:
+    Return ONLY valid JSON in this format:
+    {{
+        "match_score": 0-100,
+        "missing_skills": ["skill1", "skill2"],
+        "suggestions": ["suggestion1", "suggestion2"]
+    }}
     """
     client = _get_client()
     response = client.chat.completions.create(
