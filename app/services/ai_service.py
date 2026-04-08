@@ -20,29 +20,20 @@ def _get_client() -> OpenAI:
     return _client
 
 
-
-
-def analyze_with_ai(resume_text: str, job_description: str):
+def analyze_resume_content(resume_text: str):
 
     prompt = f"""
-    Analyze the resume and compare it with the job description.
+    Analyze this resume:
 
-    Resume:
     {resume_text}
 
-    Job Description:
-    {job_description}
+    Return ONLY valid JSON:
 
-    IMPORTANT RULES:
-    - Return ONLY valid JSON
-    - Do NOT add any explanation or text outside JSON
-    - match_score must be an integer between 0 and 100
-
-    Expected format:
     {{
-        "match_score": 65,
-        "missing_skills": ["AWS", "Redis"],
-        "suggestions": ["Learn AWS basics", "Build a Redis project"]
+        "skills": ["skill1", "skill2"],
+        "experience_level": "junior/mid/senior",
+        "strengths": ["strength1"],
+        "weaknesses": ["weakness1"]
     }}
     """
 
@@ -57,10 +48,43 @@ def analyze_with_ai(resume_text: str, job_description: str):
 
     try:
         return json.loads(content)
-    except json.JSONDecodeError:
-        return {
-            "error": "Invalid JSON from AI",
-            "raw_response": content
-        }
+    except:
+        return {"error": "Invalid JSON", "raw": content}
+    
+
+
+def match_with_job_description(resume: str, job: str):
+
+    prompt = f"""
+    Compare resume with job description.
+
+    Resume:
+    {resume}
+
+    Job:
+    {job}
+
+    Return ONLY valid JSON:
+
+    {{
+        "match_score": 0,
+        "missing_skills": ["skill1"],
+        "suggestions": ["suggestion1"]
+    }}
+    """
+
+    client = _get_client()
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    content = response.choices[0].message.content
+
+    try:
+        return json.loads(content)
+    except:
+        return {"error": "Invalid JSON", "raw": content}
     
     

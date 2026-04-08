@@ -1,14 +1,8 @@
 from fastapi import APIRouter
 from app.schemas.career_schema import ResumeInput
-from app.services.ai_service import analyze_with_ai
+from app.services.resume_service import analyze_resume
 
 router = APIRouter()
 @router.post("/career/analyze")
 def analyze(data: ResumeInput):
-    result = analyze_with_ai(
-        data.resume_text,
-        data.job_description
-    )
-    return {
-        "result": result
-    }
+    return analyze_resume(data)
