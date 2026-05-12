@@ -8,8 +8,8 @@ router = APIRouter()
 
 
 @router.put("/tasks/{task_id}/complete")
-def complete_task(task_id: int):
-    return mark_task_completed(task_id)
+def complete_task(task_id: int,current_user: User = Depends(get_current_user)):
+    return mark_task_completed(task_id, current_user.id)
 
 @router.get("/tasks")
 def fetch_tasks(user_id: int):

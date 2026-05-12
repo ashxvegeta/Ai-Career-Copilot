@@ -27,11 +27,11 @@ def save_tasks(user_id: int, tasks_dict: dict):
         db.close()
 
 
-def mark_task_completed(task_id: int):
+def mark_task_completed(task_id: int, user_id: int):
     db = SessionLocal()
 
     try:
-        task = db.query(Task).filter(Task.id == task_id).first()
+        task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
         if not task:
             print(f"Task with id {task_id} not found")
             return {"error": "Task not found"}
